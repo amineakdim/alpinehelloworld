@@ -5,6 +5,10 @@ FROM alpine:latest
 RUN apk add --no-cache --update python3 py3-pip bash
 ADD ./webapp/requirements.txt /tmp/requirements.txt
 
+# Créer et activer l'environnement virtuel
+RUN python3 -m venv /venv
+RUN source /venv/bin/activate
+
 # Install dependencies
 RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
 
