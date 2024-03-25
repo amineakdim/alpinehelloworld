@@ -9,8 +9,8 @@ ADD ./webapp/requirements.txt /tmp/requirements.txt
 RUN python3 -m venv /venv
 RUN source /venv/bin/activate
 
-# Install dependencies
-RUN pip3 install --no-cache-dir -q -r /tmp/requirements.txt
+# Install dependencies inside virtual environnment
+RUN /venv/bin/pip install --no-cache-dir -r /tmp/requirements.txt
 
 # Add our code
 ADD ./webapp /opt/webapp/
@@ -25,4 +25,4 @@ USER myuser
 
 # Run the app.  CMD is required to run on Heroku
 # $PORT is set by Heroku			
-CMD gunicorn --bind 0.0.0.0:$PORT wsgi 
+CMD ["/venv/bin/gunicorn", "--bind", "0.0.0.0:$PORT", "wsgi"]
