@@ -1,20 +1,23 @@
 #Grab the latest alpine image
 FROM alpine:latest
 
-# Install python and pip
-RUN apk add --no-cache  python3 py3-pip bash
-ADD ./webapp/requirements.txt /tmp/requirements.txt
+# Installez les dépendances système nécessaires
+RUN apk add --no-cache python3 py3-pip bash
 
-# Install dependencies
-RUN apk add --no-cache python3 py3-pip \
-    && pip3 install --no-cache-dir -r /tmp/requirements.txt
+# Ajoutez votre code
+ADD ./webapp /app
+WORKDIR /app
 
-# Add our code
-ADD ./webapp /opt/webapp/
-WORKDIR /opt/webapp
+# Créez un environnement virtuel et activez-le
+RUN python3 -m venv venv
+RUN source venv/bin/activate
 
-# Expose is NOT supported by Heroku
-# EXPOSE 5000 		
+# Installez les dépendances Python à partir du fichier requirements.txt
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install --no-cache-dir -r /tmp/requirements.txt
+
+# Désactivez l'environnement virtuel
+RUN deactivate
 
 # Run the image as a non-root user
 RUN adduser -D myuser
